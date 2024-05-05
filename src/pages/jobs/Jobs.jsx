@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import JobCard from "../../components/jobcard/JobCard";
 import styles from "./jobs.module.css";
-import { minSalary } from "../../constants/constant";
+import { experienceData, minSalary } from "../../constants/constant";
 
 import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
@@ -12,9 +12,14 @@ const Jobs = () => {
     const [jobs, setJobs] = useState([]);
     const [filteredjobs, setFilteredjobs] = useState([]);
     const [minBasePay, setMinBasePay] = useState("none");
+    const [experience, setExperience] = useState("none");
 
     const handleMinBasePay = (e) => {
         setMinBasePay(e.target.value);
+    };
+
+    const handleExperience = (e) => {
+        setExperience(e.target.value);
     };
 
     const myHeaders = new Headers();
@@ -28,13 +33,19 @@ const Jobs = () => {
         let temp = [];
         if (minBasePay !== "none") {
             temp = jobs.filter((job) => job.minJdSalary >= minBasePay);
-            setFilteredjobs(temp);
         }
+        if (experience !== "none") {
+            temp =
+                temp.length === 0
+                    ? jobs.filter((job) => job.minExp <= experience)
+                    : temp.filter((job) => job.minExp <= experience);
+        }
+        setFilteredjobs(temp);
     };
 
     useEffect(() => {
         handleFilter();
-    }, [minBasePay]);
+    }, [minBasePay, experience]);
 
     const requestOptions = {
         method: "POST",
@@ -52,9 +63,25 @@ const Jobs = () => {
     return (
         <div className="">
             <div className={styles.filter}>
-                <Box sx={{ minWidth: 240 }}>
+                <Box sx={{ minWidth: 120 }}>
                     <FormControl sx={{ m: 1, minWidth: 120 }}>
-                        {minBasePay !== "none" && <p className="">Min Base Pay</p>}
+                        <p className={experience === "none" ? styles.hideLabel : styles.showLabel}>Experience</p>
+                        <Select value={experience} onChange={handleExperience}>
+                            <MenuItem value="none" style={{ display: "none" }}>
+                                Experience
+                            </MenuItem>
+                            {experienceData.map((item, idx) => (
+                                <MenuItem key={idx} value={item}>
+                                    {item}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </Box>
+
+                <Box sx={{ minWidth: 120 }}>
+                    <FormControl sx={{ m: 1, minWidth: 120 }}>
+                        <p className={minBasePay === "none" ? styles.hideLabel : styles.showLabel}>Min Base Pay</p>
                         <Select value={minBasePay} onChange={handleMinBasePay}>
                             <MenuItem value="none" style={{ display: "none" }}>
                                 Minimum Base Pay

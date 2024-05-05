@@ -11,3 +11,11 @@
     flex-wrap: wrap;
     padding: 20px;
 }
+
+.hideLabel {
+    visibility: hidden;
+}
+
+.showLabel {
+    visibility: visible;
+}
