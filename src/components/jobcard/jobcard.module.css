@@ -1,0 +1,85 @@
+.jobcard {
+    border-radius: 20px;
+    box-shadow: 0px 0px 6px 2px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.jobContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.logoContainer {
+    display: flex;
+    gap: 20px;
+}
+
+.companyLogo {
+    width: 50px;
+    height: 50px;
+}
+
+.jobInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.companyName {
+    color: #8b8b8b;
+    font-weight: 600;
+}
+
+.role {
+    text-transform: capitalize;
+    font-size: 1.1rem;
+}
+
+.location {
+    text-transform: capitalize;
+}
+
+.description {
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.expanded {
+    -webkit-line-clamp: unset;
+}
+
+.viewMore {
+    color: #0000ff;
+    margin: 5px auto;
+    text-align: center;
+    cursor: pointer;
+}
+
+.experienceHeading {
+    color: #8b8b8b;
+    font-weight: 600;
+}
+
+.btnApply {
+    width: 100%;
+    background: #55efc4;
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+@media (min-width: 768px) {
+    .jobcard {
+        width: 30%;
+    }
+}

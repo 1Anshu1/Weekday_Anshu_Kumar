@@ -1,4 +1,10 @@
+import Jobs from "./pages/jobs/Jobs";
+
 const App = () => {
-    return <div>App</div>;
+    return (
+        <div>
+            <Jobs />
+        </div>
+    );
 };
 export default App;
