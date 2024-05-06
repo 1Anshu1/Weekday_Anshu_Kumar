@@ -19,6 +19,8 @@ const Jobs = () => {
     const [roles, setRoles] = useState([]);
     const [remote, setRemote] = useState([]);
     const [location, setLocation] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [offset, setOffset] = useState(0);
 
     const handleMinBasePay = (e) => {
         setMinBasePay(e.target.value);
@@ -32,7 +34,7 @@ const Jobs = () => {
     myHeaders.append("Content-Type", "application/json");
     const body = JSON.stringify({
         limit: 10,
-        offset: 0,
+        offset: offset,
     });
 
     const handleFilter = () => {
@@ -73,7 +75,7 @@ const Jobs = () => {
 
     useEffect(() => {
         handleFilter();
-    }, [minBasePay, experience, roles, remote, location]);
+    }, [minBasePay, experience, roles, remote, location, jobs]);
 
     const requestOptions = {
         method: "POST",
@@ -84,8 +86,37 @@ const Jobs = () => {
     useEffect(() => {
         fetch("https://api.weekday.technology/adhoc/getSampleJdJSON", requestOptions)
             .then((response) => response.json())
-            .then((result) => setJobs(result.jdList))
+            .then((result) => setJobs([...jobs, ...result.jdList]))
             .catch((error) => console.error(error));
+    }, [offset]);
+
+    // Infinite Scrolling and reducing api call using debouncing
+
+    function debounce(func, delay) {
+        let timeout;
+        return function () {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                func();
+            }, delay);
+        };
+    }
+
+    function handleScroll() {
+        if (
+            document.documentElement.scrollTop + document.documentElement.clientHeight + 50 >=
+            document.documentElement.scrollHeight
+        ) {
+            setOffset((prev) => prev + 10);
+            setLoading(true);
+        }
+    }
+
+    useEffect(() => {
+        window.addEventListener("scroll", debounce(handleScroll, 500));
+        return () => {
+            window.removeEventListener("scroll", debounce(handleScroll, 500));
+        };
     }, []);
 
     return (
@@ -134,13 +165,9 @@ const Jobs = () => {
                 location.length > 0
                     ? filteredjobs?.map((job) => <JobCard key={job.jdUid} jobDetails={job} />)
                     : jobs?.map((job) => <JobCard key={job.jdUid} jobDetails={job} />)}
-            </div>
 
-            {/* <div className="">
-                {jobs?.map((job) => (
-                    <div key={job.jdUid}>{job.location}</div>
-                ))}
-            </div> */}
+                <div className="loader-container">{loading && <div className="loader"></div>}</div>
+            </div>
         </div>
     );
 };
