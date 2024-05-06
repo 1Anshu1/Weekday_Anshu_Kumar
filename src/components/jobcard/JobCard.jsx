@@ -26,10 +26,10 @@ const JobCard = ({ jobDetails }) => {
                         {`${jobDetails?.salaryCurrencyCode} ${
                             jobDetails?.minJdSalary
                                 ? jobDetails?.maxJdSalary
-                                    ? `${jobDetails?.minJdSalary} - ${jobDetails?.maxJdSalary}`
-                                    : `${jobDetails?.minJdSalary}`
-                                : `${jobDetails?.maxJdSalary}`
-                        } LPA ✅`}
+                                    ? `$${jobDetails?.minJdSalary}k - $${jobDetails?.maxJdSalary}k`
+                                    : `$${jobDetails?.minJdSalary}k`
+                                : `$${jobDetails?.maxJdSalary}k`
+                        }✅`}
                     </div>
                 )}
                 {jobDetails?.jobDetailsFromCompany && (
