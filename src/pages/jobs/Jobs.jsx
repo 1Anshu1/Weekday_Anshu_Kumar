@@ -120,7 +120,7 @@ const Jobs = () => {
     }, []);
 
     return (
-        <div className="">
+        <div className={styles.container}>
             <div className={styles.filter}>
                 <RolesFilter roles={roles} setRoles={setRoles} />
                 <Box sx={{ minWidth: 120 }}>
@@ -162,9 +162,17 @@ const Jobs = () => {
                 experience !== "none" ||
                 roles.length > 0 ||
                 remote.length > 0 ||
-                location.length > 0
-                    ? filteredjobs?.map((job) => <JobCard key={job.jdUid} jobDetails={job} />)
-                    : jobs?.map((job) => <JobCard key={job.jdUid} jobDetails={job} />)}
+                location.length > 0 ? (
+                    filteredjobs.length > 0 ? (
+                        filteredjobs?.map((job) => <JobCard key={job.jdUid} jobDetails={job} />)
+                    ) : (
+                        <div className={styles.nojob}>No Jobs available for this category at the moment</div>
+                    )
+                ) : jobs.length > 0 ? (
+                    jobs?.map((job) => <JobCard key={job.jdUid} jobDetails={job} />)
+                ) : (
+                    <div className={styles.nojob}>No Jobs available for this category at the moment</div>
+                )}
 
                 <div className="loader-container">{loading && <div className="loader"></div>}</div>
             </div>
