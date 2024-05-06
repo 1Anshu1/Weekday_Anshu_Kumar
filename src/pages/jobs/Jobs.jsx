@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import JobCard from "../../components/jobcard/JobCard";
 import styles from "./jobs.module.css";
 import { experienceData, minSalary } from "../../constants/constant";
@@ -10,16 +11,17 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import RemoteFilter from "../../components/remoteFilter/RemoteFilter";
 import LocationFilter from "../../components/location/LocationFilter";
+import { getJobsAction } from "../../redux/feature/jobsSlice";
 
 const Jobs = () => {
-    const [jobs, setJobs] = useState([]);
+    const { loading, jobs } = useSelector((state) => state.jobs);
+    const dispatch = useDispatch();
     const [filteredjobs, setFilteredjobs] = useState([]);
     const [minBasePay, setMinBasePay] = useState("none");
     const [experience, setExperience] = useState("none");
     const [roles, setRoles] = useState([]);
     const [remote, setRemote] = useState([]);
     const [location, setLocation] = useState([]);
-    const [loading, setLoading] = useState(false);
     const [offset, setOffset] = useState(0);
 
     const handleMinBasePay = (e) => {
@@ -29,13 +31,6 @@ const Jobs = () => {
     const handleExperience = (e) => {
         setExperience(e.target.value);
     };
-
-    const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    const body = JSON.stringify({
-        limit: 10,
-        offset: offset,
-    });
 
     const handleFilter = () => {
         let temp = [];
@@ -77,17 +72,8 @@ const Jobs = () => {
         handleFilter();
     }, [minBasePay, experience, roles, remote, location, jobs]);
 
-    const requestOptions = {
-        method: "POST",
-        headers: myHeaders,
-        body,
-    };
-
     useEffect(() => {
-        fetch("https://api.weekday.technology/adhoc/getSampleJdJSON", requestOptions)
-            .then((response) => response.json())
-            .then((result) => setJobs([...jobs, ...result.jdList]))
-            .catch((error) => console.error(error));
+        dispatch(getJobsAction(offset));
     }, [offset]);
 
     // Infinite Scrolling and reducing api call using debouncing
@@ -108,7 +94,6 @@ const Jobs = () => {
             document.documentElement.scrollHeight
         ) {
             setOffset((prev) => prev + 10);
-            setLoading(true);
         }
     }
 
@@ -173,9 +158,8 @@ const Jobs = () => {
                 ) : (
                     <div className={styles.nojob}>No Jobs available for this category at the moment</div>
                 )}
-
-                <div className="loader-container">{loading && <div className="loader"></div>}</div>
             </div>
+            {loading && <div className={styles.loader}></div>}
         </div>
     );
 };
