@@ -8,6 +8,7 @@ import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
+import RemoteFilter from "../../components/remoteFilter/RemoteFilter";
 
 const Jobs = () => {
     const [jobs, setJobs] = useState([]);
@@ -15,6 +16,7 @@ const Jobs = () => {
     const [minBasePay, setMinBasePay] = useState("none");
     const [experience, setExperience] = useState("none");
     const [roles, setRoles] = useState([]);
+    const [remote, setRemote] = useState([]);
 
     const handleMinBasePay = (e) => {
         setMinBasePay(e.target.value);
@@ -27,7 +29,7 @@ const Jobs = () => {
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     const body = JSON.stringify({
-        limit: 10,
+        limit: 20,
         offset: 0,
     });
 
@@ -48,12 +50,22 @@ const Jobs = () => {
                     ? jobs.filter((job) => roles.includes(job.jobRole))
                     : temp.filter((job) => roles.includes(job.jobRole));
         }
+        if (remote.length === 1) {
+            temp =
+                temp.length === 0
+                    ? jobs.filter((job) =>
+                          remote[0] === "remote" ? job.location === "remote" : job.location !== "remote"
+                      )
+                    : temp.filter((job) =>
+                          remote[0] === "remote" ? job.location === "remote" : job.location !== "remote"
+                      );
+        }
         setFilteredjobs(temp);
     };
 
     useEffect(() => {
         handleFilter();
-    }, [minBasePay, experience, roles]);
+    }, [minBasePay, experience, roles, remote]);
 
     const requestOptions = {
         method: "POST",
@@ -87,7 +99,7 @@ const Jobs = () => {
                         </Select>
                     </FormControl>
                 </Box>
-
+                <RemoteFilter remote={remote} setRemote={setRemote} />
                 <Box sx={{ minWidth: 120 }}>
                     <FormControl sx={{ m: 1, minWidth: 120 }}>
                         <p className={minBasePay === "none" ? styles.hideLabel : styles.showLabel}>Min Base Pay</p>
@@ -106,10 +118,16 @@ const Jobs = () => {
             </div>
 
             <div className={styles.jobs}>
-                {filteredjobs.length > 0
+                {(minBasePay !== "none" || experience !== "none" || roles.length > 0 || remote.length > 0) > 0
                     ? filteredjobs?.map((job) => <JobCard key={job.jdUid} jobDetails={job} />)
                     : jobs?.map((job) => <JobCard key={job.jdUid} jobDetails={job} />)}
             </div>
+
+            {/* <div className="">
+                {jobs?.map((job) => (
+                    <div key={job.jdUid}>{job.location}</div>
+                ))}
+            </div> */}
         </div>
     );
 };

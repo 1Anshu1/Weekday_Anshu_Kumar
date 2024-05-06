@@ -1,21 +1,19 @@
-import { useState } from "react";
-import styles from "./rolesFilter.module.css";
+import styles from "./remoteFilter.module.css";
 import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Chip from "@mui/material/Chip";
-import { roleData } from "../../constants/constant";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 
-export default function RolesFilter({ roles, setRoles }) {
+export default function RemoteFilter({ remote, setRemote }) {
     const MenuProps = {
         PaperProps: {
             style: {
                 maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-                minWidth: 250,
+                minWidth: 120,
             },
         },
     };
@@ -24,7 +22,7 @@ export default function RolesFilter({ roles, setRoles }) {
         const {
             target: { value },
         } = event;
-        setRoles(
+        setRemote(
             // On autofill we get a stringified value.
             typeof value === "string" ? value.split(",") : value
         );
@@ -32,21 +30,21 @@ export default function RolesFilter({ roles, setRoles }) {
 
     const handleDelete = (e, value) => {
         e.preventDefault();
-        setRoles(roles.filter((item) => item !== value));
+        setRemote(remote.filter((item) => item !== value));
     };
 
     return (
         <div>
-            <FormControl sx={{ m: 1, minWidth: 300 }}>
-                <p className={roles.length === 0 ? styles.hideLabel : styles.showLabel}>Roles</p>
+            <FormControl sx={{ m: 1, minWidth: 120 }}>
+                <p className={remote.length === 0 ? styles.hideLabel : styles.showLabel}>Remote</p>
                 <Select
                     multiple
                     displayEmpty
-                    value={roles}
+                    value={remote}
                     onChange={handleChange}
                     renderValue={(selected) => {
                         if (selected.length === 0) {
-                            return <div>Roles</div>;
+                            return <div>Remote</div>;
                         }
                         return (
                             <Box sx={{ display: "flex", gap: 1 }}>
@@ -64,11 +62,12 @@ export default function RolesFilter({ roles, setRoles }) {
                     }}
                     MenuProps={MenuProps}
                 >
-                    {roleData.map((role) => (
-                        <MenuItem key={role} value={role} className={styles.role}>
-                            {role}
-                        </MenuItem>
-                    ))}
+                    <MenuItem value={"remote"} className={styles.role}>
+                        Remote
+                    </MenuItem>
+                    <MenuItem value={"onsite"} className={styles.role}>
+                        Onsite
+                    </MenuItem>
                 </Select>
             </FormControl>
         </div>
