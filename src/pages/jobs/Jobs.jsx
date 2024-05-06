@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import JobCard from "../../components/jobcard/JobCard";
 import styles from "./jobs.module.css";
 import { experienceData, minSalary } from "../../constants/constant";
+import RolesFilter from "../../components/rolesFilter/RolesFilter";
 
 import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
@@ -13,6 +14,7 @@ const Jobs = () => {
     const [filteredjobs, setFilteredjobs] = useState([]);
     const [minBasePay, setMinBasePay] = useState("none");
     const [experience, setExperience] = useState("none");
+    const [roles, setRoles] = useState([]);
 
     const handleMinBasePay = (e) => {
         setMinBasePay(e.target.value);
@@ -40,12 +42,18 @@ const Jobs = () => {
                     ? jobs.filter((job) => job.minExp <= experience)
                     : temp.filter((job) => job.minExp <= experience);
         }
+        if (roles.length !== 0) {
+            temp =
+                temp.length === 0
+                    ? jobs.filter((job) => roles.includes(job.jobRole))
+                    : temp.filter((job) => roles.includes(job.jobRole));
+        }
         setFilteredjobs(temp);
     };
 
     useEffect(() => {
         handleFilter();
-    }, [minBasePay, experience]);
+    }, [minBasePay, experience, roles]);
 
     const requestOptions = {
         method: "POST",
@@ -63,6 +71,7 @@ const Jobs = () => {
     return (
         <div className="">
             <div className={styles.filter}>
+                <RolesFilter roles={roles} setRoles={setRoles} />
                 <Box sx={{ minWidth: 120 }}>
                     <FormControl sx={{ m: 1, minWidth: 120 }}>
                         <p className={experience === "none" ? styles.hideLabel : styles.showLabel}>Experience</p>
